@@ -1,4 +1,4 @@
-package presentation;
+package integration;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -7,19 +7,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import service.LibroService;
 
 /**
- * Servlet implementation class LibroCtrl
+ * Servlet implementation class LibroRESTCtrl
  */
-@WebServlet("/libri")
-public class LibroCtrl extends HttpServlet {
+@WebServlet("/api/libri")
+public class LibroRESTCtrl extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LibroCtrl() {
+    public LibroRESTCtrl() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,15 +32,19 @@ public class LibroCtrl extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		LibroService ls = new LibroService();
+		response.setContentType("application/json");
 		
-//		ls.getTitoli();
-//		for (String titolo : ls.getTitoli()) {
-//			
-//			response.getWriter().append(titolo);
-//		}
-		request.setAttribute("libri", ls.getTitoli());
-		request.getRequestDispatcher("libri.jsp").forward(request, response);
+		JSONArray json = new JSONArray();
+		for (String titolo : ls.getTitoli()) {
+			JSONObject t = new JSONObject();
+			t.put("titolo", titolo);
+			json.put(t);
+		}
 		
+		response.getWriter().append(json.toString());
+	
+		
+//		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
